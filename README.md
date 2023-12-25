@@ -1,7 +1,7 @@
 # 🎓 Trabalho de Gradução FATEC Jales
 
 ## 👀 Descrição Breve
-Este repositório contém o trabalho de conclusão de curso (TCC) que desenvolve uma máquina de liquidos comercial completo utilizando das tecnologias web e Arduino.
+Este repositório contém a programação e documentação Arduino do trabalho de conclusão de curso (TCC) que desenvolve uma máquina de liquidos comercial completo utilizando das tecnologias web e Arduino.
 
 ## 📱 Tecnologias Utilizadas
 - Circuito Embarcado Arduino Mega
