@@ -3,14 +3,22 @@
 #include <SPI.h>
 #include "LeitorRFID.h"
 
+#define DEBUG
 RFID_RC522::RFID_RC522(int pinoSDA, int pinoRST)
     : rfid(pinoSDA, pinoRST) {}
 
-void RFID_RC522::Inicializar()
+bool RFID_RC522::Inicializar()
 {
     SPI.begin();
     rfid.PCD_Init();
+    if (rfid.PCD_PerformSelfTest() != true)
+    {
+        Serial.println("Falha no Leitor NFC");
+        delay(1000);
+        return false;
+    }
     Serial.println("Leitor NFC Iniciado com Sucesso!");
+    return true;
 }
 
 void RFID_RC522::FinalizarOperacao()
@@ -73,12 +81,6 @@ String RFID_RC522::LerUID()
     return uid;
 }
 
-/*
-Chaveiro: 721 bytes
-Cartão: ??? bytes
-TAG: ??? bytes
-Retorno: booleano
-*/
 bool RFID_RC522::GravarDados(String &dados)
 {
     uint16_t tamanho = dados.length();

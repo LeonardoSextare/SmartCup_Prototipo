@@ -13,7 +13,7 @@ public:
     const String CARTAO = " D3 D5 6A 0E";
     const String CHAVEIRO = " 23 27 00 9A";
 
-    void Inicializar();
+    bool Inicializar();
     bool Autenticar(byte bloco);
     // bool AutenticarNTAG213(byte bloco); //Função não utilizada por enquanto
     String LerUID();

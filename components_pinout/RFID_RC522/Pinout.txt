@@ -1,0 +1,6 @@
+RST  = 4928  - Fio 
+IRQ  = N/A - 
+MISO = 50  - Fio 
+MOSI = 51  - Fio 
+SCK  = 52  - Fio 
+SDA  = 53  - Fio 
