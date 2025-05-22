@@ -23,12 +23,12 @@ JsonDocument SmartCupApi::post_json(const char *rota, const JsonDocument &corpo)
 String SmartCupApi::_fazer_get(const char* rota) {
     String url = String(URL_BASE) + rota;
     if (!_http.begin(_client, url)) {
-        Serial.println("SmartCupApi: falha ao iniciar GET");
+        // Serial.println("SmartCupApi: falha ao iniciar GET");
         return "";
     }
     int code = _http.GET();
     if (code != HTTP_CODE_OK) {
-        Serial.printf("SmartCupApi: erro HTTP GET %d\n", code);
+        // Serial.printf("SmartCupApi: erro HTTP GET %d\n", code);
         _http.end();
         return "";
     }
@@ -40,7 +40,7 @@ String SmartCupApi::_fazer_get(const char* rota) {
 String SmartCupApi::_fazer_post(const char *rota, const String &payload) {
     String url = String(URL_BASE) + rota;
     if (!_http.begin(_client, url)) {
-        Serial.println("SmartCupApi: falha ao iniciar POST");
+        // Serial.println("SmartCupApi: falha ao iniciar POST");
         return "";
     }
 
@@ -50,7 +50,7 @@ String SmartCupApi::_fazer_post(const char *rota, const String &payload) {
     // Envia o POST com o payload
     int code = _http.POST(payload);
     if (code != HTTP_CODE_OK && code != HTTP_CODE_CREATED) {
-        Serial.printf("SmartCupApi: erro HTTP POST %d\n", code);
+        // Serial.printf("SmartCupApi: erro HTTP POST %d\n", code);
         String body = _http.getString();
         _http.end();
         return body;
@@ -64,15 +64,15 @@ String SmartCupApi::_fazer_post(const char *rota, const String &payload) {
 JsonDocument SmartCupApi::_parsear_json(const String& payload) {
     JsonDocument doc;
     if (payload.isEmpty()) {
-        Serial.println("SmartCupApi: payload vazio");
+        // Serial.println("SmartCupApi: payload vazio");
         return doc;  // doc.isNull()==true
     }
 
     DeserializationError err = deserializeJson(doc, payload);
     if (err) {
-        Serial.print("SmartCupApi: JSON inválido (");
-        Serial.print(err.c_str());
-        Serial.println(")");
+        // Serial.print("SmartCupApi: JSON inválido (");
+        // Serial.print(err.c_str());
+        // Serial.println(")");
         return JsonDocument();  // doc nulo
     }
     return doc;

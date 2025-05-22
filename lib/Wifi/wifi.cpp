@@ -11,10 +11,10 @@ void conectar_wifi(String ssid, String senha)
   while (WiFi.status() != WL_CONNECTED)
   {
     delay(500);
-    Serial.print(".");
+    // Serial.print(".");
   }
 
-  Serial.println("\nWiFi conectado!");
-  Serial.print("IP: ");
+  // Serial.println("\nWiFi conectado!");
+  // Serial.print("IP: ");
   Serial.println(WiFi.localIP());
 }

@@ -3,7 +3,6 @@
 #include <SPI.h>
 #include "LeitorRFID.h"
 
-#define DEBUG
 RFID_RC522::RFID_RC522(int pinoSDA, int pinoRST)
     : rfid(pinoSDA, pinoRST) {}
 
@@ -13,11 +12,11 @@ bool RFID_RC522::Inicializar()
     rfid.PCD_Init();
     if (rfid.PCD_PerformSelfTest() != true)
     {
-        Serial.println("Falha no Leitor NFC");
+        // Serial.println("Falha no Leitor NFC");
         delay(1000);
         return false;
     }
-    Serial.println("Leitor NFC Iniciado com Sucesso!");
+    // Serial.println("Leitor NFC Iniciado com Sucesso!");
     return true;
 }
 
