@@ -10,6 +10,7 @@ A solução permite a dispensa precisa e automática do líquido solicitado pelo
 
 ## ⚙️ Funcionalidades
 
+- Leitura NFC
 - Dispensa automática e precisa de líquidos sem necessidade de acionamento manual.
 - Validação de usuários.
 - Comunicação sem fio com uma API (SmartCup_Api) para coleta e armazenamento de dados.
