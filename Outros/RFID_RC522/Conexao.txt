@@ -1,0 +1,9 @@
+RC522     →     Arduino Mega
+-----------------------------
+SDA       →     53
+SCK       →     52
+MOSI      →     51
+MISO      →     50
+RST       →     5 (ou outro pino digital livre)
+GND       →     GND
+3.3V      →     3.3V
