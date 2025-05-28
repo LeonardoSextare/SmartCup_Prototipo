@@ -8,9 +8,7 @@ const String SENHA = "a1b2c3d4";
 SmartCupApi api;
 PonteSerial ponte;
 
-void aguardar_mega();
-void verificar_wifi();
-void verificar_api();
+void processar_comando_mega(const String &esperada, const String &resposta, void (*acao)() = nullptr);
 void processar_pedido(const String &pedido);
 
 void setup()
@@ -18,9 +16,12 @@ void setup()
     ponte.iniciar(9600);
     delay(6000);
 
-    aguardar_mega();
-    verificar_wifi();
-    verificar_api();
+    processar_comando_mega("OI ESP", "OI MEGA");
+    processar_comando_mega("WIFI", "WIFI OK", []()
+                           { conectar_wifi(SSID, SENHA); });
+    processar_comando_mega("API", "API OK", []()
+                           { api.conectar_api(); });
+    delay(5000);
 }
 
 void loop()
@@ -34,87 +35,21 @@ void loop()
         processar_pedido(pedido);
     }
 
-    delay(10);
+    delay(100);
 }
-
-void aguardar_mega()
-{
-    while (true)
-    {
-        String recebido = ponte.receber();
-        recebido.trim();
-
-        if (recebido == "OI ESP")
-        {
-            ponte.enviar("OI MEGA");
-            break;
-        }
-        delay(10);
-    }
-}
-
-void verificar_wifi()
-{
-    while (true)
-    {
-        String recebido = ponte.receber();
-        recebido.trim();
-
-        if (recebido == "WIFI")
-        {
-            conectar_wifi(SSID, SENHA);
-            ponte.enviar("WIFI OK");
-            break;
-        }
-        delay(10);
-    }
-}
-
-void verificar_api()
-{
-    while (true)
-    {
-        String recebido = ponte.receber();
-        recebido.trim();
-
-        if (recebido == "API")
-        {
-            while (true)
-            {
-                JsonDocument doc = api.obter_json("/");
-                if (!doc.isNull())
-                {
-                    String mensagem = doc["mensagem"].as<String>();
-                    if (mensagem == "Olá, mundo!")
-                        break;
-                }
-                delay(1000);
-            }
-
-            ponte.enviar("API OK");
-            break;
-        }
-        delay(10);
-    }
-}
-
 void processar_pedido(const String &codigo_copo)
 {
-    // Prepara o JSON para o endpoint /operacao
     JsonDocument json;
-    json["maquina_id"] = 1; // ID da máquina
-    json["codigo_nfc"] = codigo_copo; // UID do copo enviado pelo Mega
+    json["maquina_id"] = 1;
+    json["codigo_nfc"] = codigo_copo;
 
-    // Envia o JSON para o endpoint /operacao
     JsonDocument doc = api.post_json("/operacao", json);
     if (!doc.isNull())
     {
-        // Verifica se a resposta contém o campo "detail" (erro)
         if (doc["detail"].is<String>())
         {
             String motivo = doc["detail"].as<String>();
 
-            // Mapeia os erros da API para mensagens esperadas pelo Mega
             if (motivo == "Copo não encontrado.")
                 ponte.enviar("COPO");
             else if (motivo == "Copo não está associado a um cliente.")
@@ -126,33 +61,35 @@ void processar_pedido(const String &codigo_copo)
             else if (motivo == "Saldo insuficiente do cliente.")
                 ponte.enviar("SALDO");
             else
-                ponte.enviar("ERRO"); // Erro genérico
+                ponte.enviar("ERRO");
         }
         else
         {
-            // Pedido bem-sucedido
-            ponte.enviar("OK"); // Envia "OK" para o Mega
-
-            // Aguarda o pedido de quantidade do Mega
-            while (true)
-            {
-                String novo_pedido = ponte.receber();
-                novo_pedido.trim();
-
-                if (novo_pedido == "QUANTIDADE")
-                {
-                    // Envia a quantidade do copo
-                    int capacidade_copo = doc["copo"]["capacidade"].as<int>();
-                    ponte.enviar(String(capacidade_copo));
-                    break;
-                }
-
-                delay(10);
-            }
+            ponte.enviar("OK");
+            String qntd_copo = doc["copo"]["capacidade"];
+            processar_comando_mega("QUANTIDADE", qntd_copo);
         }
     }
     else
     {
-        ponte.enviar("ERRO_API"); // Envia erro genérico se a API não responder
+        ponte.enviar("ERRO_API");
+    }
+}
+
+void processar_comando_mega(const String &esperada, const String &resposta, void (*acao)())
+{
+    while (true)
+    {
+        String recebido = ponte.receber();
+        recebido.trim();
+
+        if (recebido == esperada)
+        {
+            if (acao != nullptr) // Verifica se o ponteiro não é nulo
+                acao();          
+            ponte.enviar(resposta);
+            break;
+        }
+        delay(10);
     }
 }

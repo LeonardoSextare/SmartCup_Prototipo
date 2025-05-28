@@ -11,7 +11,7 @@ class DisplayLCD
 public:
     DisplayLCD(uint8_t endereco, uint8_t colunas, uint8_t linhas);
     void Inicializar();
-    void Escrever(String texto, bool quebra_linha = true, bool limpar_tela = true);
+    void Escrever(String texto, bool limpar_tela = true);
     void LimparTela();
 
 private:

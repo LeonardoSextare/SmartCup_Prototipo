@@ -14,21 +14,43 @@ void DisplayLCD::Inicializar()
     lcd.clear();
 }
 
-void DisplayLCD::Escrever(String texto, bool quebra_linha, bool limpar_tela)
+void DisplayLCD::Escrever(const String texto, bool limpar_tela)
 {
     if (limpar_tela)
-        lcd.clear();
-
-    size_t c = 0, l = 0;
-    while (c < texto.length())
     {
-        lcd.setCursor(c % 16, l);
-        lcd.write(texto[c]);
+        lcd.clear();
+    }
 
-        if ((c + 1) % 16 == 0 && quebra_linha)
-            l++;
+    const uint8_t linhas = 2;
+    const uint8_t colunas = 16;
+    uint16_t idx = 0;
+    uint16_t len = texto.length();
 
-        c++;
+    for (uint8_t linha = 0; linha < linhas && idx < len; linha++)
+    {
+        while (idx < len && texto[idx] == ' ')
+            idx++;
+
+        uint16_t maxLen = (len - idx > colunas) ? colunas : (len - idx);
+        uint16_t endIdx = idx + maxLen;
+
+        if (endIdx < len && texto[endIdx] != ' ')
+        {
+            int16_t lastSpace = texto.lastIndexOf(' ', endIdx - 1);
+            if (lastSpace >= (int16_t)idx)
+            {
+                endIdx = lastSpace;
+            }
+        }
+
+        String linha_texto = texto.substring(idx, endIdx);
+        idx = endIdx;
+        while (idx < len && texto[idx] == ' ')
+            idx++;
+
+        uint8_t espacos = (colunas - linha_texto.length()) / 2;
+        lcd.setCursor(espacos, linha);
+        lcd.print(linha_texto);
     }
 }
 

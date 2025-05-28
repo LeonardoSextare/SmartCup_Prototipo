@@ -4,8 +4,8 @@
 
 void conectar_wifi(String ssid, String senha)
 {
-  Serial.print("Conectando-se a ");
-  Serial.println(ssid);
+  // Serial.print("Conectando-se a ");
+  // Serial.println(ssid);
 
   WiFi.begin(ssid, senha);
   while (WiFi.status() != WL_CONNECTED)
@@ -16,5 +16,5 @@ void conectar_wifi(String ssid, String senha)
 
   // Serial.println("\nWiFi conectado!");
   // Serial.print("IP: ");
-  Serial.println(WiFi.localIP());
+  // Serial.println(WiFi.localIP());
 }
